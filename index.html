@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="stylesheet" href="./css/reset.css" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <title>Three.js application</title>
+  <!-- <script src="./js/vendors/csg.js"></script>
+  <script src="./js/vendors/threeCSG.js"></script> -->
+</head>
+
+<body>
+
+<script src="./js/vendors/three.min.js"></script>
+<script src="./js/vendors/OrbitControls.js"></script>
+<script>
+var camera, scene, renderer;
+var grid,sphere;
+
+Object.assign(THREE.PlaneBufferGeometry.prototype, {
+  toGrid: function() {
+    let segmentsX = this.parameters.widthSegments || 1;
+    let segmentsY = this.parameters.heightSegments || 1;
+    let indices = [];
+    for (let i = 0; i < segmentsY + 1; i++) {
+      let index11 = 0;
+      let index12 = 0;
+      for (let j = 0; j < segmentsX; j++) {
+        index11 = (segmentsX + 1) * i + j;
+        index12 = index11 + 1;
+        let index21 = index11;
+        let index22 = index11 + (segmentsX + 1);
+        indices.push(index11, index12);
+        if (index22 < ((segmentsX + 1) * (segmentsY + 1) - 1)) {
+          indices.push(index21, index22);
+        }
+      }
+      if ((index12 + segmentsX + 1) <= ((segmentsX + 1) * (segmentsY + 1) - 1)) {
+        indices.push(index12, index12 + segmentsX + 1);
+      }
+    }
+    this.setIndex(indices);
+    return this;
+  }
+});
+
+init();
+
+
+var position = grid.geometry.attributes.position;
+var positionStart = grid.geometry.attributes.positionStart;
+var clock = new THREE.Clock();
+var time = 0;
+console.log(sphere.position);
+
+render();
+
+function init(){
+  scene = new THREE.Scene();
+	camera = new THREE.PerspectiveCamera( 35, window.innerWidth/window.innerHeight, 1, 1000 );
+
+  camera.position.set( -40,30, 10);
+  camera.lookAt(scene.position);
+
+  var controls = new THREE.OrbitControls( camera );
+
+  //controls.update() must be called after any manual changes to the camera's transform
+  controls.update();
+
+	renderer = new THREE.WebGLRenderer({
+    antialias: true
+  });
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+  var material = new THREE.LineBasicMaterial({color: "white"})
+  var planeGeometry = new THREE.PlaneBufferGeometry(40, 40,20,20);
+  grid = new THREE.LineSegments(planeGeometry.toGrid(), material);
+  grid.geometry.attributes.positionStart = grid.geometry.attributes.position.clone();
+  grid.rotation.x = Math.PI / 2;
+  scene.add(grid);
+
+  console.log( grid.geometry.attributes.position );
+
+  var holeGeometry = new THREE.CircleGeometry( 3.3, 32 );
+  var holeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000,side: THREE.DoubleSide, depthTest: false } );
+  var hole = new THREE.Mesh( holeGeometry, holeMaterial );
+  hole.renderOrder=2;
+  scene.add(hole);
+  hole.rotation.x =- Math.PI / 2;
+
+  var outlineMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff,side: THREE.DoubleSide, depthTest: false } );
+	var outlineHole = new THREE.Mesh( holeGeometry, outlineMaterial );
+	outlineHole.position.y = hole.position.y-0.001;
+	outlineHole.scale.multiplyScalar(1.02);
+  outlineHole.rotation.x =Math.PI / 2;
+  outlineHole.renderOrder=0;
+	scene.add(outlineHole);
+
+  var sphereMaterial = new THREE.LineBasicMaterial({color: 0xffffff,side: THREE.DoubleSide, depthTest: false})
+  var sphereGeometry = new THREE.SphereBufferGeometry(3,32,32);
+  sphere = new THREE.Mesh(sphereGeometry,sphereMaterial);
+  sphere.renderOrder=3;
+  scene.add(sphere);
+}
+
+// Render
+function render() {
+  requestAnimationFrame(render);
+	// ---------------------------------------------------
+  // Animation
+  time += clock.getDelta();
+  for (let i = 0; i < position.count; i++) {
+    position.setY(i, positionStart.getY(i) + Math.sin(position.getX(i) * .35 + time) * 0.5);
+
+    position.setZ(i, -(((Math.pow(position.getX(i), 2)+(Math.pow(position.getY(i), 2)))*0.01) )
+    *
+    (positionStart.getZ(i) + Math.cos(position.getY(i) * .3 + time) * .25));
+  }
+
+  sphere.position.y = (Math.sin(time*0.7) * 2) + 2;
+  position.needsUpdate = true;
+	// ---------------------------------------------------
+	renderer.render( scene, camera );
+
+}
+	</script>
+</body>
+</html>
