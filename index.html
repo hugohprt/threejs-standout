@@ -136,16 +136,6 @@ function render() {
   // Animation
   time += clock.getDelta();
 
-  //   position.setZ(i, -(((Math.pow(position.getX(i), 2)+(Math.pow(position.getY(i), 2)))*0.01) )
-  //   *
-  //   (positionStart.getZ(i) + Math.cos(position.getY(i) * .3 + time) * .25));
-  //
-  //
-  //   //GLITCH
-  //   // position.setY(i, (((Math.pow(position.getX(i), 2)+(Math.pow(position.getZ(i), 2)))*1) )
-  //   // *(positionStart.getY(i) + Math.cos(position.getX(i) * .3 + time) * .25));
-  // }
-
   refreshVertices();
 
   sphere.position.y = (Math.sin(time*0.7)*3) + 2;
