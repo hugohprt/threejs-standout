@@ -2,22 +2,23 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="./css/reset.css" />
   <link rel="stylesheet" href="./css/style.css" />
   <title>Three.js application</title>
-  <!-- <script src="./js/vendors/csg.js"></script>
-  <script src="./js/vendors/threeCSG.js"></script> -->
+
 </head>
 
 <body>
 
 <script src="./js/vendors/three.min.js"></script>
 <script src="./js/vendors/OrbitControls.js"></script>
+<script src="./js/vendors/perlin-noise-classical.js"></script>
 <script>
 var camera, scene, renderer;
-var grid,sphere;
+var grid,sphere,hole,outlineHole;
+var vertices;
 
 Object.assign(THREE.PlaneBufferGeometry.prototype, {
   toGrid: function() {
@@ -55,20 +56,23 @@ var clock = new THREE.Clock();
 var time = 0;
 console.log(sphere.position);
 
+var perlin = new Perlin();
+var peak = 0.01;
+var smoothing = 32;
+var sphereAnimSpeed = 0.7;
 render();
 
 function init(){
   scene = new THREE.Scene();
 	camera = new THREE.PerspectiveCamera( 35, window.innerWidth/window.innerHeight, 1, 1000 );
 
-  camera.position.set( -40,30, 15);
+  camera.position.set( -30,30, 15);
   camera.lookAt(scene.position);
 
   var controls = new THREE.OrbitControls( camera );
 
   //controls.update() must be called after any manual changes to the camera's transform
   controls.update();
-
 	renderer = new THREE.WebGLRenderer({
     antialias: true
   });
@@ -86,24 +90,43 @@ function init(){
 
   var holeGeometry = new THREE.CircleGeometry( 3.3, 32 );
   var holeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000,side: THREE.DoubleSide, depthTest: false } );
-  var hole = new THREE.Mesh( holeGeometry, holeMaterial );
+  hole = new THREE.Mesh( holeGeometry, holeMaterial );
   hole.renderOrder=2;
   scene.add(hole);
   hole.rotation.x =- Math.PI / 2;
 
   var outlineMaterial = new THREE.MeshBasicMaterial( { color: 0xffffff,side: THREE.DoubleSide, depthTest: false } );
-	var outlineHole = new THREE.Mesh( holeGeometry, outlineMaterial );
+	outlineHole = new THREE.Mesh( holeGeometry, outlineMaterial );
 	outlineHole.position.y = hole.position.y-0.001;
 	outlineHole.scale.multiplyScalar(1.02);
   outlineHole.rotation.x =Math.PI / 2;
   outlineHole.renderOrder=0;
 	scene.add(outlineHole);
 
+
+
   var sphereMaterial = new THREE.LineBasicMaterial({color: 0xffffff,side: THREE.DoubleSide, depthTest: false})
   var sphereGeometry = new THREE.SphereBufferGeometry(3,32,32);
   sphere = new THREE.Mesh(sphereGeometry,sphereMaterial);
   sphere.renderOrder=3;
   scene.add(sphere);
+
+}
+
+function refreshVertices() {
+    // var curTime = new Date().getTime();
+    // console.log(delta);
+    vertices = grid.geometry.attributes.position.array;
+
+    var map1 = vertices.map(x=>x*2);
+    for (var i = 0; i <= vertices.length; i += 3) {
+        vertices[i+2] = (peak * perlin.noise(
+            ((grid.position.x + vertices[i]+time)/smoothing),
+            ((grid.position.z + vertices[i+1]+time)/smoothing)
+        )) *((Math.pow(vertices[i+1], 2)+(Math.pow(vertices[i], 2)))*1);
+    }
+    grid.geometry.attributes.position.needsUpdate = true;
+    grid.geometry.computeVertexNormals();
 }
 
 // Render
@@ -112,20 +135,23 @@ function render() {
 	// ---------------------------------------------------
   // Animation
   time += clock.getDelta();
-  for (let i = 0; i < position.count; i++) {
-    position.setY(i, positionStart.getY(i) + Math.sin(position.getX(i) * .35 + time) * 0.5);
 
-    position.setZ(i, -(((Math.pow(position.getX(i), 2)+(Math.pow(position.getY(i), 2)))*0.015) )
-    *
-    (positionStart.getZ(i) + Math.cos(position.getY(i) * .3 + time) * .25));
-  }
+  refreshVertices();
 
-  sphere.position.y = (Math.sin(time*0.7) * 2) + 2;
+  sphere.position.y = (Math.sin(time*0.7)*3) + 2;
+
+  hole.scale.set((-Math.sin(time*sphereAnimSpeed)+6)/6
+    ,(-Math.sin(time*sphereAnimSpeed)+6)/6
+    ,1);
+  outlineHole.scale.set(((-Math.sin(time*sphereAnimSpeed)+6)/6)*1.02
+      ,((-Math.sin(time*sphereAnimSpeed)+6)/6)*1.02
+      ,1);
+  // low2 + (high2 - low2) * (value - low1) / (high1 - low1);
   position.needsUpdate = true;
 	// ---------------------------------------------------
 	renderer.render( scene, camera );
-
 }
+
 	</script>
 </body>
 </html>
