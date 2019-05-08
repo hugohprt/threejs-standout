@@ -1,14 +1,14 @@
 /* FONTS */
 @font-face {
  font-family: "Syne";
- src: url("assets/fonts/syne-regular.woff2") format("woff2"),
-        url("assets/fonts/syne-regular.woff") format("woff");
+ src: url("../assets/fonts/syne-regular.woff2") format("woff2"),
+        url("../assets/fonts/syne-regular.woff") format("woff");
 }
 
 @font-face {
  font-family: "Syne Extra";
- src: url("assets/fonts/syne-extra.woff2") format("woff2"),
-        url("assets/fonts/syne-extra.woff") format("woff");
+ src: url("../assets/fonts/syne-extra.woff2") format("woff2"),
+        url("../assets/fonts/syne-extra.woff") format("woff");
 }
 
 /* CLASSES GENERALES */
