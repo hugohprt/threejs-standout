@@ -90,6 +90,7 @@ canvas {
     margin-top: 0;
   }
 }
+
 @media screen and (min-width: 1367px) {
   body {
     font-size:18px;
