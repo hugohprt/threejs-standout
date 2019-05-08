@@ -1,18 +1,98 @@
+/* FONTS */
+@font-face {
+ font-family: "Syne";
+ src: url("assets/fonts/syne-regular.woff2") format("woff2"),
+        url("assets/fonts/syne-regular.woff") format("woff");
+}
+
+@font-face {
+ font-family: "Syne Extra";
+ src: url("assets/fonts/syne-extra.woff2") format("woff2"),
+        url("assets/fonts/syne-extra.woff") format("woff");
+}
+
 /* CLASSES GENERALES */
 
 body {
   font-size:16px;
+  color:white;
+  background:black;
+}
+
+.wrapper {
+  overflow: hidden;
+  display:flex;
+  flex-direction: row-reverse;
+  flex-wrap: nowrap;
+  margin:0 auto;
 }
 
 .hidden {
   display:hidden;
 }
 
+canvas {
+  box-sizing: border-box;
+  margin:40px;
+  border: 1px solid white;
+}
 
-/* HEADER */
+.content {
+  box-sizing: border-box;
+  width:38%;
+  max-height: 100vh;
+  overflow: auto;
+  /* position: absolute;
+  right:0; */
+  padding:40px 40px 40px 0;
+  font-family: "Syne";
+  letter-spacing: 0.003em;
+}
 
+.content h1 {
+  font-family: "Syne Extra";
+  font-size: 2.5em;
+  margin-top: -0.2em; /*temporary fix to top white space caused by the webfont */
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
 
-/*STYLES DE L'ARTICLE*/
+.content p {
+  line-height: 1.33em;
+}
 
+.content p {
+  margin-bottom:0.75rem;
+}
 
-/* CONTENU GENERAL */
+.details {
+  margin-top: 0.5rem;
+  line-height: 1.33em;
+  width:50%;
+  text-align: right;
+  float:right;
+}
+
+@media screen and (max-width: 750px) {
+  body {
+    font-size:14px;
+  }
+  .wrapper{
+    flex-direction: column-reverse;
+    overflow: auto;
+  }
+  .content {
+    width: 100%;
+    padding: 0 40px 40px 40px;
+    max-height: none;
+  }
+  .content h1{
+    margin-top: 0;
+  }
+}
+
+@media screen and (min-width: 1367px) {
+  body {
+    font-size:18px;
+  }
+}
