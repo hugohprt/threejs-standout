@@ -8,9 +8,24 @@
   <link rel="stylesheet" href="./css/style.css" />
   <title>Three.js application</title>
 
+  <script src="./js/vendors/jquery-3.2.1.min.js"></script>
 </head>
 
 <body>
+
+  <div class="content">
+    <h1>Stand Out</h1>
+    <p>At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio.</p>
+    <p>Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus, ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</p>
+    <div class="details">
+      <hr>
+      <p>typographic, layout and three.js web experiment</p>
+      <ul class="sp">
+        <li>x: <span id="x"></span></li>
+        <li>y: <span id="y"></span></li>
+        <li>z: <span id="z"></span></li>
+      </ul>
+  </div>
 
 <script src="./js/vendors/three.min.js"></script>
 <script src="./js/vendors/OrbitControls.js"></script>
@@ -64,19 +79,27 @@ render();
 
 function init(){
   scene = new THREE.Scene();
-	camera = new THREE.PerspectiveCamera( 35, window.innerWidth/window.innerHeight, 1, 1000 );
+
+  renderer = new THREE.WebGLRenderer({
+    antialias: true
+  });
+
+  if (window.innerWidth > 750) {
+  	camera = new THREE.PerspectiveCamera( 35, window.innerWidth*0.62 / window.innerHeight, 1, 1000 );
+    renderer.setSize(window.innerWidth*0.62-80, window.innerHeight-80);
+  }
+  else {
+  	camera = new THREE.PerspectiveCamera( 35, window.innerWidth/ window.innerHeight*1.62, 1, 1000 );
+    renderer.setSize(window.innerWidth-80, window.innerHeight*0.62-80);
+  }
 
   camera.position.set( -30,30, 15);
   camera.lookAt(scene.position);
 
   var controls = new THREE.OrbitControls( camera );
-
   //controls.update() must be called after any manual changes to the camera's transform
   controls.update();
-	renderer = new THREE.WebGLRenderer({
-    antialias: true
-  });
-	renderer.setSize( window.innerWidth, window.innerHeight );
+
 	document.body.appendChild( renderer.domElement );
 
   var material = new THREE.LineBasicMaterial({color: "white"})
@@ -88,7 +111,7 @@ function init(){
 
   console.log( grid.geometry.attributes.position );
 
-  var holeGeometry = new THREE.CircleGeometry( 3.3, 32 );
+  var holeGeometry = new THREE.CircleGeometry( 3.3, 64 );
   var holeMaterial = new THREE.MeshBasicMaterial( { color: 0x000000,side: THREE.DoubleSide, depthTest: false } );
   hole = new THREE.Mesh( holeGeometry, holeMaterial );
   hole.renderOrder=2;
@@ -106,7 +129,7 @@ function init(){
 
 
   var sphereMaterial = new THREE.LineBasicMaterial({color: 0xffffff,side: THREE.DoubleSide, depthTest: false})
-  var sphereGeometry = new THREE.SphereBufferGeometry(3,32,32);
+  var sphereGeometry = new THREE.SphereBufferGeometry(3,64,64);
   sphere = new THREE.Mesh(sphereGeometry,sphereMaterial);
   sphere.renderOrder=3;
   scene.add(sphere);
@@ -140,16 +163,28 @@ function render() {
 
   sphere.position.y = (Math.sin(time*0.7)*3) + 2;
 
-  hole.scale.set((-Math.sin(time*sphereAnimSpeed)+6)/6
-    ,(-Math.sin(time*sphereAnimSpeed)+6)/6
-    ,1);
-  outlineHole.scale.set(((-Math.sin(time*sphereAnimSpeed)+6)/6)*1.02
-      ,((-Math.sin(time*sphereAnimSpeed)+6)/6)*1.02
-      ,1);
-  // low2 + (high2 - low2) * (value - low1) / (high1 - low1);
+
+  $('#x').html(camera.position.x.toFixed(3));
+  $('#y').html(camera.position.y.toFixed(3));
+  $('#z').html(camera.position.z.toFixed(3));
   position.needsUpdate = true;
 	// ---------------------------------------------------
 	renderer.render( scene, camera );
+}
+
+window.addEventListener( 'resize', onWindowResize, false );
+
+function onWindowResize(){
+
+    if (window.innerWidth > 750) {
+      camera.aspect = window.innerWidth*0.62 / window.innerHeight;
+      renderer.setSize(window.innerWidth*0.62-80, window.innerHeight-80);
+    }
+    else {
+      camera.aspect = window.innerWidth / window.innerHeight*1.62;
+      renderer.setSize(window.innerWidth-80, window.innerHeight*0.62-80);
+    }
+    camera.updateProjectionMatrix();
 }
 
 	</script>

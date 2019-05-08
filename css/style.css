@@ -1,13 +1,69 @@
+/* FONTS */
+@font-face {
+ font-family: "Syne";
+ src: url("assets/fonts/syne-regular.woff2") format("woff2"),
+        url("assets/fonts/syne-regular.woff") format("woff");
+}
+
+@font-face {
+ font-family: "Syne Extra";
+ src: url("assets/fonts/syne-extra.woff2") format("woff2"),
+        url("assets/fonts/syne-extra.woff") format("woff");
+}
+
 /* CLASSES GENERALES */
 
 body {
   font-size:16px;
+  color:white;
+  background:black;
+  overflow: hidden;
 }
 
 .hidden {
   display:hidden;
 }
 
+canvas {
+  margin:40px;
+  border: 1px solid white;
+}
+
+.content {
+  box-sizing: border-box;
+  width:38%;
+  max-height: 100vh;
+  overflow: auto;
+  position: absolute;
+  right:0;
+  padding:40px 40px 40px 0;
+  font-family: "Syne";
+  letter-spacing: 0.003em;
+}
+
+.content h1 {
+  font-family: "Syne Extra";
+  font-size: 2.5em;
+  margin-top: -0.2em; /*temporary fix to top white space caused by the webfont */
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+}
+
+.content p {
+  line-height: 1.33em;
+}
+
+.content p {
+  margin-bottom:0.75rem;
+}
+
+.details {
+  margin-top: 0.5rem;
+  line-height: 1.33em;
+  width:50%;
+  text-align: right;
+  float:right;
+}
 
 /* HEADER */
 
