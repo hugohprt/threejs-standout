@@ -17,10 +17,14 @@ body {
   font-size:16px;
   color:white;
   background:black;
+}
+
+.wrapper {
   overflow: hidden;
   display:flex;
   flex-direction: row-reverse;
   flex-wrap: nowrap;
+  margin:0 auto;
 }
 
 .hidden {
@@ -71,9 +75,11 @@ canvas {
 
 @media screen and (max-width: 750px) {
   body {
+    font-size:14px;
+  }
+  .wrapper{
     flex-direction: column-reverse;
     overflow: auto;
-    font-size:14px;
   }
   .content {
     width: 100%;
@@ -84,10 +90,8 @@ canvas {
     margin-top: 0;
   }
 }
-/* HEADER */
-
-
-/*STYLES DE L'ARTICLE*/
-
-
-/* CONTENU GENERAL */
+@media screen and (min-width: 1367px) {
+  body {
+    font-size:18px;
+  }
+}
