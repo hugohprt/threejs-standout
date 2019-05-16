@@ -62,7 +62,7 @@ function init(){
   camera.position.set( -30, 20, 8);
   camera.lookAt(scene.position);
 
-  var controls = new THREE.OrbitControls( camera );
+  var controls = new THREE.OrbitControls(camera, renderer.domElement);
   //controls.update() must be called after any manual changes to the camera's transform
   controls.update();
 
